@@ -1,6 +1,9 @@
 // Global array for posts to act as database for project
 let posts = [];
 
+// Global variable for tracking edited posts
+let editingPostId = null;
+
 // Define Elements for DOM
 
 const formElement = document.getElementById("post-form")
@@ -19,6 +22,7 @@ posts = JSON.parse(currentPosts);
 // Render Posts
 function renderPosts() {
 postsContainerElement.innerHTML="";
+
 posts.forEach(post => { const postDiv= document.createElement("div"); postDiv.classList.add("post");
 
 const postTitle= document.createElement("h2");
@@ -29,22 +33,43 @@ postContent.textContent = post.content;
 
 const editButton= document.createElement("button")
 editButton.textContent = "Edit";
-editButton.ClassList.add("edit");
+editButton.classList.add("edit");
 
 
 const deleteButton= document.createElement("button")
 deleteButton.textContent= "Delete";
-deleteButton.ClassList.add("delete");
+deleteButton.classList.add("delete");
 
 postDiv.appendChild(postTitle);
 postDiv.appendChild(postContent);
-postDiv.appendChild(editButton);
-postDiv.appendChild(deleteButton);
 
+const buttonContainer = document.createElement("div");
+buttonContainer.classList.add("post-buttons");
+buttonContainer.appendChild(editButton);
+buttonContainer.appendChild(deleteButton);
+
+postDiv.appendChild(buttonContainer);
 postsContainerElement.appendChild(postDiv);
-}); }
 
 
+
+// Delete a Post
+deleteButton.addEventListener("click", () => { 
+posts = posts.filter(p => p.id !== post.id);
+localStorage.setItem("posts", JSON.stringify(posts));
+renderPosts();
+});
+
+// Edit a Post
+editButton.addEventListener("click", () => {
+editPostId= post.id;
+titleElement.value= post.title;
+contentElement.value = post.content; 
+ });
+  });
+}
+
+renderPosts();
 
 // Add a New Post
 formElement.addEventListener("submit", function(event) {
@@ -54,26 +79,36 @@ if (titleElement.value === "") { titleErrorElement.textContent= "Title is requir
 
 if (contentElement.value ==="") { contentErrorElement.textContent = "Content is required"; return;} else { contentErrorElement.textContent = "";}
 
+if (editingPostId === null) {
 const newPost = {
 id: Date.now(),
 title: titleElement.value,
 content: contentElement.value 
 };
-
 posts.push(newPost);
-localStorage.setItem("posts", JSON.stringify(posts));
+} else {
+const postToEdit = posts.find(p => p.id === editingPostId);
+postToEdit.title = titleElement.value; 
+postToEdit.content = contentElement.value; 
+editingPostId= null;
+}
 
+localStorage.setItem("posts", JSON.stringify(posts));
 renderPosts();
 
 titleElement.value = "";
 contentElement.value = "";
 
-});
 
 
-// Delete a Post
+})
 
-// Edit a Post
+
+
+
+
+
+
 
 
 

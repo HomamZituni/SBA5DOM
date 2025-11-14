@@ -47,6 +47,29 @@ postsContainerElement.appendChild(postDiv);
 
 
 // Add a New Post
+formElement.addEventListener("submit", function(event) {
+  event.preventDefault();  
+
+if (titleElement.value === "") { titleErrorElement.textContent= "Title is required"; return;} else { titleErrorElement.textContent= "";}
+
+if (contentElement.value ==="") { contentErrorElement.textContent = "Content is required"; return;} else { contentErrorElement.textContent = "";}
+
+const newPost = {
+id: Date.now(),
+title: titleElement.value,
+content: contentElement.value 
+};
+
+posts.push(newPost);
+localStorage.setItem("posts", JSON.stringify(posts));
+
+renderPosts();
+
+titleElement.value = "";
+contentElement.value = "";
+
+});
+
 
 // Delete a Post
 
